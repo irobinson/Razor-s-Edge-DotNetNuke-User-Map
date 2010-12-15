@@ -1,0 +1,43 @@
+@using DotNetNuke.Security.Roles
+@using DotNetNuke.Entities.Users
+@using DotNetNuke.Entities.Profile
+
+@functions {
+  public static string GetProfileProperty(UserProfile profile, string propertyName)
+  {
+    ProfilePropertyDefinition objProperty = profile.GetProperty(propertyName);
+    if (objProperty == null || string.IsNullOrEmpty(objProperty.PropertyValue)) return string.Empty;
+    return objProperty.PropertyValue;
+  }
+  
+  public string GetUserAddress(UserProfile profile)
+  {
+    string address = GetProfileProperty(profile, "Street") + ", ";
+    address += GetProfileProperty(profile, "City") + ", ";
+    address += GetProfileProperty(profile, "Region") + " ";
+    address += GetProfileProperty(profile, "PostalCode");
+    return address;
+  }
+}
+
+<p>
+<label for="selected-user">Select a user:</label>
+@{var users = (new RoleController()).GetUsersByRoleName(Dnn.Portal.PortalId, "Registered Users");}
+<select name="selected-user" id="selected-user">
+<option value="">Please Select One</option>
+@foreach (UserInfo user in users)
+{
+  <option value="@GetUserAddress(user.Profile)">@user.DisplayName</option>
+}
+</select>
+</p>
+
+<p id="selected-address" style="display:none;">Selected address: <span id="address" style="font-weight:bold;"></span></p>
+<p id="directions" style="display:none;"><input type="button" value="Get Directions From Current Location" id="get-directions" /></p>
+
+<div id="map_canvas" style="width:600px; height:400px;"></div>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="/DesktopModules/RazorModules/RazorsEdgeUserMap/Js/gmap3-1.2.min.js"></script>
+<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+<script type="text/javascript" src="/DesktopModules/RazorModules/RazorsEdgeUserMap/Js/razorsedge.js"></script>

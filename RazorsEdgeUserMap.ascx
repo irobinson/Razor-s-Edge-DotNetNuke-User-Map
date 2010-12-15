@@ -1,0 +1,1 @@
+<%@ Control AutoEventWireUp="False" Inherits="DotNetNuke.Web.Razor.RazorModuleBase" %>
